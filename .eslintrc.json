@@ -1,0 +1,7 @@
+{
+  "extends": [ "prettier", "plugin:node/recommended"],
+
+  "rules": {
+    "no-var": "off"
+  }
+}
