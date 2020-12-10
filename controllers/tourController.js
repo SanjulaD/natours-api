@@ -2,6 +2,14 @@ const { query } = require('express');
 const { QueryCursor } = require('mongoose');
 const Tour = require('../models/tourModel');
 
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = 5;
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+
+  next();
+}
+
 exports.getAllTours = async (req, res) => {
 
     try {
@@ -13,7 +21,12 @@ exports.getAllTours = async (req, res) => {
         const query = Tour.find(queryObj);
 
         // EXECUTE QUERY
-        const tours = await query;
+        const features = new APIFeatures(Tour.Find(), req.query)
+            .filter()
+            .sort()
+            .limitFields()
+            .paginate();
+        const tours = await features.query;
 
         // SEND RESPONSE
         res.status(200).json({
